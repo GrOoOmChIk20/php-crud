@@ -23,5 +23,46 @@ class Model{
 
     }
 
+    public function insert()
+    {
+
+        if (isset($_POST['submit'])) {
+            var_dump($this->formValidation($_POST));
+        }
+    }
+
+    public function formValidation($formData)
+    {
+
+        $formValid = array();
+        $formValid['valid'] = true;
+        $formValid['validFields'] = array();
+        $formValid['notValidFields'] = array();
+
+        foreach ($formData as $key => $value) {
+
+            if ($key == 'submit') continue;
+
+            if (isset($value)) {
+
+                if (empty($value)) {
+                    $formValid['valid'] = false;
+                    $formValid['notValidFields'][] = $key;
+                } else {
+                    $dataValid = trim($value);
+                    $dataValid = stripslashes($value);
+                    $dataValid = htmlspecialchars($value);
+
+                    $formValid['validFields'][$key] = $dataValid;
+                }
+            } else {
+
+                $formValid['valid'] = false;
+                $formValid['notValidFields'][] = $key;
+            }
+        }
+
+        return $formValid;
+    }
 
 }
