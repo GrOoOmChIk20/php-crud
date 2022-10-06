@@ -1,3 +1,10 @@
+<?php
+
+    include_once 'model.php';
+
+    $model = new Model();
+
+?>
 <!doctype html>
 <html lang="en">
 
@@ -20,6 +27,7 @@
             </div>
         </div>
         <div class="row">
+            <?php $insert = $model->insert();  ?>
             <div class="col-md-5 mx-auto">
                 <form action="" method="post">
                     <div class="form-group">
