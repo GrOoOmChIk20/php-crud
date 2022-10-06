@@ -9,11 +9,56 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
+    <title>Web-interface</title>
 </head>
 
 <body>
-    <h1>Hello, world!</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-5">
+                <h1 class="text-center">Web-interface</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 mx-auto">
+                <form action="" method="post">
+                    <div class="form-group">
+                        <input type="text" name="userlogin" class="form-control" placeholder="Login">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="userpass" placeholder="Password">
+                    </div>
+                    <h3>Person data</h3>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="usersurname" placeholder="Surname">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="usergender" value="male" checked>
+                            <label class="form-check-label" for="exampleRadios1">
+                                Male gender
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="usergender" value="famale">
+                            <label class="form-check-label" for="exampleRadios2">
+                                Female gender
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <!-- TODO: DatePicker -->
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" name="submit">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
