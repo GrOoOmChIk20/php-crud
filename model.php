@@ -23,28 +23,27 @@ class Model {
         } catch (Exception $e) {
             echo 'Connection failed! ' . $e->getMessage();
         }
-
     }
 
-    public function insert ()
+    public function insert()
     {
         $userData = $_POST['User'];
 
         if (isset($userData['submit'])) {
-            
+
             $formValidation = $this->formValidation($userData);
 
             switch ($formValidation['valid']) {
                 case false:
 
-                        $this->errorField = "Please fill in all the fields";
-                    
+                    $this->errorField = "Please fill in all the fields";
+
                     break;
 
                 case true:
 
                     $userData = $formValidation['validFields'];
-                    
+
                     $query = "INSERT INTO `users` (`login`, `password`, `name`, `surname`, `gender`) VALUES ('{$userData['login']}', '{$userData['pass']}', '{$userData['name']}', '{$userData['surname']}', '{$userData['gender']}')";
 
                     if ($sql = $this->connect->query($query)) {
@@ -57,11 +56,8 @@ class Model {
                     }
 
                     break;
-                   
             }
-
         }
-
     }
 
     public function fetch ($fields)
@@ -104,13 +100,10 @@ class Model {
        return $data;
     }
 
-
-
-
-    public function formValidation($formData)
+    public function formValidation ($formData)
     {
 
-        
+
         $formValid = [];
         $formValid['valid'] = true;
         $formValid['validFields'] = [];
@@ -122,12 +115,11 @@ class Model {
 
             if (isset($value) && !empty($value)) {
 
-                    $dataValid = trim($value);
-                    $dataValid = stripslashes($value);
-                    $dataValid = htmlspecialchars($value);
+                $dataValid = trim($value);
+                $dataValid = stripslashes($value);
+                $dataValid = htmlspecialchars($value);
 
-                    $formValid['validFields'][$key] = $dataValid;
-                
+                $formValid['validFields'][$key] = $dataValid;
             } else {
 
                 $formValid['valid'] = false;
@@ -137,5 +129,4 @@ class Model {
 
         return $formValid;
     }
-
 }
