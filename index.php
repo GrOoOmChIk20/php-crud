@@ -1,8 +1,8 @@
 <?php
 
-    include_once 'model.php';
+include_once 'model.php';
 
-    $model = new Model();
+$model = new Model();
 
 ?>
 <!doctype html>
@@ -23,35 +23,53 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 mt-5">
+
                 <h1 class="text-center">Web-interface</h1>
+
+                <?php $insert = $model->insert();  ?>
+                <?php if (isset($model->errorField)) {  ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo $model->errorField; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php } elseif (isset($model->succesField)) { ?>
+                    <div class="alert alert-success" role="alert">
+                        <?php echo $model->succesField; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php } ?>
+
             </div>
         </div>
         <div class="row">
-            <?php $insert = $model->insert();  ?>
-            <div class="col-md-5 mx-auto">
+            <div class="col-md-4 mx-auto">
+                <h4>Add user</h4>
                 <form action="" method="post">
                     <div class="form-group">
-                        <input type="text" name="userlogin" class="form-control" placeholder="Login">
+                        <input type="text" name="User[login]" class="form-control" placeholder="Login">
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" name="userpass" placeholder="Password">
-                    </div>
-                    <h3>Person data</h3>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="username" placeholder="Name">
+                        <input type="password" class="form-control" name="User[pass]" placeholder="Password">
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" name="usersurname" placeholder="Surname">
+                        <input type="text" class="form-control" name="User[name]" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="User[surname]" placeholder="Surname">
                     </div>
                     <div class="form-group">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="usergender" value="male" checked>
+                            <input class="form-check-input" type="radio" name="User[gender]" value="m" checked>
                             <label class="form-check-label" for="exampleRadios1">
                                 Male gender
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="usergender" value="famale">
+                            <input class="form-check-input" type="radio" name="User[gender]" value="f">
                             <label class="form-check-label" for="exampleRadios2">
                                 Female gender
                             </label>
@@ -61,9 +79,58 @@
                         <!-- TODO: DatePicker -->
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary" name="submit">Send</button>
+                        <button type="submit" class="btn btn-primary" name="User[submit]">Send</button>
                     </div>
                 </form>
+            </div>
+
+            <div class="col-md-6 mx-auto">
+                <h4>Views users</h4>
+                <table class="table table-hover table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Surname</th>
+                            <th scope="col">Gender</th>
+                            <th scope="col">Birthday</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <?php
+                            $usersRows = $model->fetch(['id', 'name', 'surname', 'gender', 'birthday']);
+
+                            if (!empty($usersRows)) {
+
+                                foreach ($usersRows as $userRow) {
+
+                                    echo '<tr>';
+
+                                    foreach ($userRow as $field => $value) {
+                                        
+                                        if ($field == 'id') {
+                                            $idUser = $value;
+                                        }
+
+                                        echo "<td>$value</td>";
+
+                                    }
+
+                                    echo "<td><a href='read.php?id=$idUser' class='badge badge-primary'>View</a>";
+                                    echo "<a href='edit.php?id=$idUser' class='badge badge-warning'>Edit</a>";
+                                    echo "<a href='delete.php?id=$idUser' class='badge badge-danger'>Delete</a></td>";
+                                    echo '</tr>';
+                                    
+                                }
+
+                            }
+
+                        ?>
+                       
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
