@@ -98,7 +98,7 @@ $model = new Model();
                         </tr>
                     </thead>
                     <tbody>
-                        
+
                         <?php
                             $usersRows = $model->fetch(['id', 'name', 'surname', 'gender', 'birthday']);
 
@@ -118,9 +118,9 @@ $model = new Model();
 
                                     }
 
-                                    echo "<td><a href='read.php?id=$idUser' class='badge badge-primary'>View</a>";
-                                    echo "<a href='edit.php?id=$idUser' class='badge badge-warning'>Edit</a>";
-                                    echo "<a href='delete.php?id=$idUser' class='badge badge-danger'>Delete</a></td>";
+                                    echo "<td><a href='actions/read.php?id=$idUser' class='badge badge-primary'>View</a>";
+                                    echo "<a href='actions/edit.php?id=$idUser' class='badge badge-warning'>Edit</a>";
+                                    echo "<a href='actions/delete.php?id=$idUser' class='badge badge-danger'>Delete</a></td>";
                                     echo '</tr>';
                                     
                                 }

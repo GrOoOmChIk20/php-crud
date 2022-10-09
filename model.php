@@ -31,14 +31,9 @@ class Model {
 
         if (isset($userData['submit'])) {
 
-            $formValidation = $this->formValidation($userData);
+            $formValidation = $this->validation($userData);
 
             switch ($formValidation['valid']) {
-                case false:
-
-                    $this->errorField = "Please fill in all the fields";
-
-                    break;
 
                 case true:
 
@@ -56,11 +51,66 @@ class Model {
                     }
 
                     break;
+
+                case false:
+
+                    $this->errorField = "Please fill in all the fields";
+
+                    break;
+
             }
         }
     }
 
-    public function fetch ($fields)
+    public function delete ($data)
+    {
+
+        $validData = $this->validation($data);
+
+        $idUser = $validData['validFields']['id'];
+
+        switch (isset($idUser)) {
+           
+            case true:
+
+                $fetchUser = $this->fetch(['id'], $idUser);
+
+                if (!empty($fetchUser)) {
+
+                    $query = "UPDATE users SET `is_deleted` = 1 WHERE id =  $idUser";
+
+                    if ($sql = $this->connect->query($query)) {
+
+                        $this->succesField = "The entry successfully added";
+                        //TODO: redirect to index becouse we action delete
+
+                    } else {
+
+                        $this->errorField = "User not deleted, please try again";
+
+                    }
+
+                } else {
+
+                    $this->errorField = "This user does not exist, please try again";
+
+                }
+
+                break;
+
+            case false:
+
+                echo $idUser['validFields']['id'] . 'aaa';
+
+                $this->errorField = "User deletion failed, please try again";
+
+                break;
+        }
+
+    }
+
+
+    public function fetch ($fields, $id = null)
     {
         $data = [];
         $queryRows = null;
@@ -87,8 +137,21 @@ class Model {
 
         $query = "SELECT $queryRows FROM users";
 
+        if (!is_null($id)) {
+
+            $query.= " WHERE id = $id";
+
+            // var_dump($query);die;
+
+        }
+
         if ($sql = $this->connect->query($query)) {
-            
+
+            if (mysqli_num_rows($sql) == 0) {
+
+                return $data;
+            }
+
             while ($row = mysqli_fetch_assoc($sql)) {
 
                 $data[] = $row;
@@ -100,7 +163,7 @@ class Model {
        return $data;
     }
 
-    public function formValidation ($formData)
+    public function validation ($data)
     {
 
 
@@ -109,15 +172,23 @@ class Model {
         $formValid['validFields'] = [];
         $formValid['notValidFields'] = [];
 
-        foreach ($formData as $key => $value) {
+        foreach ($data as $key => $value) {
 
             if ($key == 'submit') continue;
 
-            if (isset($value) && !empty($value)) {
+            if (isset($value) && (!empty($value) || $value === '0')) {
+
+                 if ($key === 'id') {
+
+                    $value = (int) $value;
+                    
+                }
 
                 $dataValid = trim($value);
                 $dataValid = stripslashes($value);
                 $dataValid = htmlspecialchars($value);
+
+               
 
                 $formValid['validFields'][$key] = $dataValid;
             } else {
