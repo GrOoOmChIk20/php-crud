@@ -39,7 +39,9 @@ class Model {
 
                     $userData = $formValidation['validFields'];
 
-                    $query = "INSERT INTO `users` (`login`, `password`, `name`, `surname`, `gender`) VALUES ('{$userData['login']}', '{$userData['pass']}', '{$userData['name']}', '{$userData['surname']}', '{$userData['gender']}')";
+                    $userData['birthday'] = strtotime($userData['birthday']);
+
+                    $query = "INSERT INTO `users` (`login`, `password`, `name`, `surname`, `gender`, `birthday`) VALUES ('{$userData['login']}', '{$userData['pass']}', '{$userData['name']}', '{$userData['surname']}', '{$userData['gender']}', '{$userData['birthday']}')";
 
                     if ($sql = $this->connect->query($query)) {
 
@@ -224,9 +226,21 @@ class Model {
                 $dataValid = stripslashes($value);
                 $dataValid = htmlspecialchars($value);
 
-               
+                if ($key == 'birthday') {
+
+                    if (!is_numeric(strtotime($value))) {
+
+                        $formValid['valid'] = false;
+                        $formValid['notValidFields'][] = $key;
+
+                        continue;
+
+                    }
+
+                }
 
                 $formValid['validFields'][$key] = $dataValid;
+
             } else {
 
                 $formValid['valid'] = false;

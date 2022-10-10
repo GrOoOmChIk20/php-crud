@@ -6,7 +6,6 @@ $model = new Model();
 
 $userData = $model->view($_GET);
 
-var_dump($userData);
 ?>
 <!doctype html>
 <html lang="en">
@@ -19,10 +18,13 @@ var_dump($userData);
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
+
     <title>Web-interface</title>
 </head>
 
 <body>
+    <script src="https://unpkg.com/js-datepicker"></script>
     <div class="container">
         <div class="row justify-content-center">
 
@@ -39,30 +41,30 @@ var_dump($userData);
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="User[gender]" value="<?= $userData['gender']; ?>" checked>
                         <label class="form-check-label" for="RadiosGender<?= strtoupper($userData['gender']); ?>">
-                            
+
                             <?php
 
-                                $gender = ' gender';
-                                
-                                switch ($userData['gender']) {
-                                    case 'm':
-                                        
-                                        echo 'Male ' . $gender;
+                            $gender = ' gender';
 
-                                        break;
+                            switch ($userData['gender']) {
+                                case 'm':
 
-                                    case 'f':
-                                        
-                                        echo 'Fmale ' . $gender;
+                                    echo 'Male ' . $gender;
 
-                                        break;
-                                    
-                                    default:
+                                    break;
+
+                                case 'f':
+
+                                    echo 'Fmale ' . $gender;
+
+                                    break;
+
+                                default:
 
                                     echo 'No ' . $gender;
 
-                                        break;
-                                }
+                                    break;
+                            }
 
                             ?>
 
@@ -70,7 +72,9 @@ var_dump($userData);
                     </div>
                 </div>
                 <div class="form-group">
-                    <!-- TODO: DatePicker -->
+                    <div class="input-group date" data-provide="datepicker">
+                        <input type="date" id="form-control-datepicker" name="User[birthday]" value="<?= date('Y-m-d', $userData['birthday']); ?>" disabled>
+                    </div>
                 </div>
             </div>
         </div>
