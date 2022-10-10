@@ -100,8 +100,6 @@ class Model {
 
             case false:
 
-                echo $idUser['validFields']['id'] . 'aaa';
-
                 $this->errorField = "User deletion failed, please try again";
 
                 break;
@@ -109,6 +107,42 @@ class Model {
 
     }
 
+    public function view ($data) {
+
+        $validData = $this->validation($data);
+
+        $idUser = $validData['validFields']['id'];
+
+        switch (isset($idUser)) {
+
+            case true:
+
+                $fetchUser = $this->fetch('', $idUser);
+
+                if (!empty($fetchUser)) {
+
+                    return $fetchUser[0];
+
+                } else {
+
+                    $this->errorField = "This user does not exist, please try again";
+
+                    //TODO: redirect to index
+
+                }
+
+                break;
+
+            case false:
+
+                $this->errorField = "This user does not exist, please try again";
+
+                //TODO: redirect to index
+
+                break;
+        }
+
+    }
 
     public function fetch ($fields, $id = null)
     {
@@ -139,9 +173,11 @@ class Model {
 
         if (!is_null($id)) {
 
-            $query.= " WHERE id = $id";
+            $query.= " WHERE (id = $id AND is_deleted = 0)";
 
-            // var_dump($query);die;
+        } else {
+
+            $query .= " WHERE is_deleted = 0";
 
         }
 

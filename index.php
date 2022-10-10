@@ -64,13 +64,13 @@ $model = new Model();
                     <div class="form-group">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="User[gender]" value="m" checked>
-                            <label class="form-check-label" for="exampleRadios1">
+                            <label class="form-check-label" for="RadiosGenderM">
                                 Male gender
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="User[gender]" value="f">
-                            <label class="form-check-label" for="exampleRadios2">
+                            <label class="form-check-label" for="RadiosGenderF">
                                 Female gender
                             </label>
                         </div>
@@ -100,35 +100,37 @@ $model = new Model();
                     <tbody>
 
                         <?php
-                            $usersRows = $model->fetch(['id', 'name', 'surname', 'gender', 'birthday']);
+                        $usersRows = $model->fetch(['id', 'name', 'surname', 'gender', 'birthday']);
 
-                            if (!empty($usersRows)) {
+                        if (!empty($usersRows)) {
 
-                                foreach ($usersRows as $userRow) {
+                            foreach ($usersRows as $userRow) {
 
-                                    echo '<tr>';
+                                echo '<tr>';
 
-                                    foreach ($userRow as $field => $value) {
-                                        
-                                        if ($field == 'id') {
-                                            $idUser = $value;
-                                        }
+                                $numUser++;
+
+                                foreach ($userRow as $field => $value) {
+
+                                    if ($field == 'id') {
+
+                                        $idUser = $value;
+                                        echo "<td>$numUser</td>";
+                                    } else {
 
                                         echo "<td>$value</td>";
-
                                     }
-
-                                    echo "<td><a href='actions/read.php?id=$idUser' class='badge badge-primary'>View</a>";
-                                    echo "<a href='actions/edit.php?id=$idUser' class='badge badge-warning'>Edit</a>";
-                                    echo "<a href='actions/delete.php?id=$idUser' class='badge badge-danger'>Delete</a></td>";
-                                    echo '</tr>';
-                                    
                                 }
 
+                                echo "<td><a href='actions/view.php?id=$idUser' class='badge badge-primary'>View</a>";
+                                echo "<a href='actions/edit.php?id=$idUser' class='badge badge-warning'>Edit</a>";
+                                echo "<a href='actions/delete.php?id=$idUser' class='badge badge-danger'>Delete</a></td>";
+                                echo '</tr>';
                             }
+                        }
 
                         ?>
-                       
+
                     </tbody>
                 </table>
             </div>
