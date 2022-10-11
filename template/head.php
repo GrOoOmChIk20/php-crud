@@ -22,7 +22,7 @@ $model = new Model();
 <body>
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#">Web-interface</a>
+            <a class="navbar-brand" href="/">Web-interface</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -44,3 +44,25 @@ $model = new Model();
                 </div>
             </div>
         </nav>
+        <div class="row">
+            <div class="col-md-12 mt-5">
+
+                <?php $insert = $model->insert();  ?>
+                <?php if (isset($model->errorField)) {  ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo $model->errorField; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php } elseif (isset($model->succesField)) { ?>
+                    <div class="alert alert-success" role="alert">
+                        <?php echo $model->succesField; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php } ?>
+
+            </div>
+        </div>

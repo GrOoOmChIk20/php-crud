@@ -12,15 +12,33 @@ $userData = $model->view($_GET);
 
     <div class="col-6 align-self-center">
         <h1 class="text-center">Web-interface: Edit user</h1>
-
+        <?php $insert = $model->edit();  ?>
+        <?php if (isset($model->errorField)) {  ?>
+            <div class="alert alert-danger" role="alert">
+                <?php echo $model->errorField; ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <?php } elseif (isset($model->succesField)) { ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo $model->succesField; ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <?php } ?>
         <form action="" method="post">
+            <div class="form-group">
+                <input type="hidden" name="User[id]" value="<?= $userData['id']; ?>"></p>
+            </div>
             <div class="form-group">
                 <label>Login</label>
                 <input type="text" class="form-control" name="User[login]" placeholder="Login" value="<?= $userData['login']; ?>">
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" class="form-control" name="User[pass]" placeholder="Password" value="<?= $userData['login']; ?>">
+                <input type="password" class="form-control" name="User[pass]" placeholder="Password" value="<?= $userData['password']; ?>">
             </div>
             <div class=" form-group">
                 <label>Name</label>
@@ -50,7 +68,9 @@ $userData = $model->view($_GET);
                     <input type="date" id="form-control-datepicker" name="User[birthday]" value="<?= date('Y-m-d', $userData['birthday']); ?>">
                 </div>
             </div>
-            <a href="../actions/edit.php?id=<?= $userData['id'] ?>" type="button" class="btn btn-warning">Edit user</a>
+            <div class="form-group">
+                <button type="submit" class="btn btn-warning" name="User[submit]">Edit user</button>
+            </div>
         </form>
     </div>
 </div>

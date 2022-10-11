@@ -64,6 +64,58 @@ class Model {
         }
     }
 
+    public function edit()
+    {
+
+        $userData = $_POST['User'];
+
+        if (isset($userData['submit'])) {
+
+            $formValidation = $this->validation($userData);
+
+            switch ($formValidation['valid']) {
+
+                case true:
+
+                    $userData = $formValidation['validFields'];
+
+                    $idUser = $userData['id'];
+                   
+                    $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
+
+                    if (!empty($fetchUser)) {
+
+                        $userData['birthday'] = strtotime($userData['birthday']);
+
+                        $query = "UPDATE users SET `login` = '{$userData['login']}', `password` = '{$userData['pass']}', `name` = '{$userData['name']}', `surname` = '{$userData['surname']}', `gender` = '{$userData['gender']}', `birthday` = '{$userData['birthday']}'  WHERE id = $idUser";
+
+                        if ($sql = $this->connect->query($query)) {
+
+                            $this->succesField = "The entry successfully added";
+                            //TODO: redirect to index becouse update page POST
+
+                        } else {
+                            $this->errorField = "The entry has not been added, try again";
+                        }
+
+                    } else {
+
+                        $this->errorField = "This user does not exist, please try again";
+
+                    }
+
+                    break;
+
+                case false:
+
+                    $this->errorField = "Please fill in all the fields";
+
+                    break;
+            }
+        }
+
+    }
+
     public function delete ($data)
     {
         $validData = $this->validation($data);
@@ -74,7 +126,7 @@ class Model {
            
             case true:
 
-                $fetchUser = $this->fetch(['id'], $idUser);
+                $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
 
                 if (!empty($fetchUser)) {
 
@@ -118,7 +170,7 @@ class Model {
 
             case true:
 
-                $fetchUser = $this->fetch('', $idUser);
+                $fetchUser = $this->fetch('', ['id' => $idUser]);
 
                 if (!empty($fetchUser)) {
 
@@ -145,7 +197,7 @@ class Model {
 
     }
 
-    public function fetch ($fields, $id = null)
+    public function fetch ($fields, $whereFields = null)
     {
         $data = [];
         $queryRows = null;
@@ -172,15 +224,29 @@ class Model {
 
         $query = "SELECT $queryRows FROM users";
 
-        if (!is_null($id)) {
+        if (!is_null($whereFields)) {
 
-            $query.= " WHERE (id = $id AND is_deleted = 0)";
+            $query .= ' WHERE (';
+
+            foreach ($whereFields as $field => $value) {
+
+                $query .= " $field = $value";
+
+                end($whereFields);
+                
+                if ($field !== key($whereFields)) {
+                    $query .= ' AND';
+                }
+
+            }
+
+            $query .= ' AND is_deleted = 0)';
 
         } else {
-
             $query .= " WHERE is_deleted = 0";
-
         }
+            
+       
 
         if ($sql = $this->connect->query($query)) {
 
