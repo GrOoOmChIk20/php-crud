@@ -14,8 +14,8 @@ class Model {
     public $errorField;
     public $succesField;
 
-    public function __construct () {
-
+    public function __construct () 
+    {
         try {
 
             $this->connect = new mysqli($this->host, $this->userName, $this->password, $this->dataBase);
@@ -66,7 +66,6 @@ class Model {
 
     public function delete ($data)
     {
-
         $validData = $this->validation($data);
 
         $idUser = $validData['validFields']['id'];
@@ -109,8 +108,8 @@ class Model {
 
     }
 
-    public function view ($data) {
-
+    public function view ($data) 
+    {
         $validData = $this->validation($data);
 
         $idUser = $validData['validFields']['id'];
@@ -203,8 +202,6 @@ class Model {
 
     public function validation ($data)
     {
-
-
         $formValid = [];
         $formValid['valid'] = true;
         $formValid['validFields'] = [];

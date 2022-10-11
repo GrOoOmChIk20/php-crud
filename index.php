@@ -1,30 +1,13 @@
 <?php
 
-include_once 'model.php';
+$titlePage = 'Web-interface';
 
-$model = new Model();
+include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
 ?>
-<!doctype html>
-<html lang="en">
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    <title>Web-interface</title>
-</head>
-
-<body>
-    <div class="container">
         <div class="row">
             <div class="col-md-12 mt-5">
-
-                <h1 class="text-center">Web-interface</h1>
 
                 <?php $insert = $model->insert();  ?>
                 <?php if (isset($model->errorField)) {  ?>
@@ -50,7 +33,7 @@ $model = new Model();
                 <h4>Add user</h4>
                 <form action="" method="post">
                     <div class="form-group">
-                        <input type="text" name="User[login]" class="form-control" placeholder="Login">
+                        <input type="text" class="form-control" name="User[login]" placeholder="Login">
                     </div>
                     <div class="form-group">
                         <input type="password" class="form-control" name="User[pass]" placeholder="Password">
@@ -119,17 +102,14 @@ $model = new Model();
                                         $idUser = $value;
 
                                         echo "<td>$numUser</td>";
-
                                     } elseif ($field == 'birthday') {
 
                                         $value = date('d-m-Y', $value);
 
                                         echo "<td>$value</td>";
-
                                     } else {
 
                                         echo "<td>$value</td>";
-
                                     }
                                 }
 
@@ -183,7 +163,6 @@ $model = new Model();
         return yy + '-' + dd + '-' + mm;
 
     }
-
 </script>
 
 </html>
