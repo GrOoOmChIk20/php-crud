@@ -29,7 +29,7 @@ class Model {
     {
         $userData = $_POST['User'];
 
-        if (isset($userData['submit'])) {
+        if (isset($userData['insert'])) {
 
             $formValidation = $this->validation($userData);
 
@@ -45,18 +45,28 @@ class Model {
 
                     if ($sql = $this->connect->query($query)) {
 
-                        $this->succesField = "The entry successfully added";
-                        //TODO: redirect to index becouse update page POST
+                        $_SESSION['succesField'] = "The entry successfully added";
+
+                        header("Location: " . $_SERVER["REQUEST_URI"]);
+                        die;
 
                     } else {
-                        $this->errorField = "The entry has not been added, try again";
+
+                        $_SESSION['errorField'] = "The entry has not been added, try again";
+
+                        header("Location: " . $_SERVER["REQUEST_URI"]);
+                        die;
+                        
                     }
 
                     break;
 
                 case false:
 
-                    $this->errorField = "Please fill in all the fields";
+                    $_SESSION['errorField'] = "Please fill in all the fields";
+
+                    header("Location: " . $_SERVER["REQUEST_URI"]);
+                    die;
 
                     break;
 
@@ -69,7 +79,7 @@ class Model {
 
         $userData = $_POST['User'];
 
-        if (isset($userData['submit'])) {
+        if (isset($userData['edit'])) {
 
             $formValidation = $this->validation($userData);
 
@@ -91,16 +101,26 @@ class Model {
 
                         if ($sql = $this->connect->query($query)) {
 
-                            $this->succesField = "The entry successfully added";
-                            //TODO: redirect to index becouse update page POST
+                            $_SESSION['succesField'] = "The entry successfully added";
+
+                            header("Location: " . $_SERVER["REQUEST_URI"]);
+                            die;
 
                         } else {
-                            $this->errorField = "The entry has not been added, try again";
+
+                            $_SESSION['errorField'] = "The entry has not been added, try again";
+
+                            header("Location: " . $_SERVER["REQUEST_URI"]);
+                            die;
+
                         }
 
                     } else {
 
-                        $this->errorField = "This user does not exist, please try again";
+                        $_SESSION['errorField'] = "This user does not exist, please try again";
+
+                        header("Location: " . $_SERVER["REQUEST_URI"]);
+                        die;
 
                     }
 
@@ -108,7 +128,10 @@ class Model {
 
                 case false:
 
-                    $this->errorField = "Please fill in all the fields";
+                    $_SESSION['errorField'] = "Please fill in all the fields";
+
+                    header("Location: " . $_SERVER["REQUEST_URI"]);
+                    die;
 
                     break;
             }
@@ -134,18 +157,26 @@ class Model {
 
                     if ($sql = $this->connect->query($query)) {
 
-                        $this->succesField = "The entry successfully added";
-                        //TODO: redirect to index becouse we action delete
+                        $_SESSION['succesField'] = "The entry successfully added";
+
+                        header("Location: /");
+                        die;
 
                     } else {
 
-                        $this->errorField = "User not deleted, please try again";
+                        $_SESSION['errorField'] = "User not deleted, please try again";
+
+                        header("Location: /");
+                        die;
 
                     }
 
                 } else {
 
-                    $this->errorField = "This user does not exist, please try again";
+                    $_SESSION['errorField'] = "This user does not exist, please try again";
+
+                    header("Location: /");
+                    die;
 
                 }
 
@@ -153,7 +184,10 @@ class Model {
 
             case false:
 
-                $this->errorField = "User deletion failed, please try again";
+                $_SESSION['errorField'] = "User deletion failed, please try again";
+
+                header("Location: /");
+                die;
 
                 break;
         }
@@ -178,7 +212,7 @@ class Model {
 
                 } else {
 
-                    $this->errorField = "This user does not exist, please try again";
+                    $_SESSION['errorField'] = "This user does not exist, please try again";
 
                     //TODO: redirect to index
 
@@ -188,7 +222,7 @@ class Model {
 
             case false:
 
-                $this->errorField = "This user does not exist, please try again";
+                $_SESSION['errorField'] = "This user does not exist, please try again";
 
                 //TODO: redirect to index
 
@@ -275,7 +309,7 @@ class Model {
 
         foreach ($data as $key => $value) {
 
-            if ($key == 'submit') continue;
+            if ($key == 'submit' || $key == 'insert' || $key == 'edit') continue;
 
             if (isset($value) && (!empty($value) || $value === '0')) {
 

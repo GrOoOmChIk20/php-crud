@@ -13,21 +13,7 @@ $userData = $model->view($_GET);
     <div class="col-6 align-self-center">
         <h1 class="text-center">Web-interface: Edit user</h1>
         <?php $insert = $model->edit();  ?>
-        <?php if (isset($model->errorField)) {  ?>
-            <div class="alert alert-danger" role="alert">
-                <?php echo $model->errorField; ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        <?php } elseif (isset($model->succesField)) { ?>
-            <div class="alert alert-success" role="alert">
-                <?php echo $model->succesField; ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        <?php } ?>
+
         <form action="" method="post">
             <div class="form-group">
                 <input type="hidden" name="User[id]" value="<?= $userData['id']; ?>"></p>
@@ -69,19 +55,14 @@ $userData = $model->view($_GET);
                 </div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-warning" name="User[submit]">Edit user</button>
+                <button type="submit" class="btn btn-warning" name="User[edit]">Edit user</button>
             </div>
         </form>
     </div>
 </div>
 
-</div>
+<?php
 
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</body>
+include_once $_SERVER['DOCUMENT_ROOT'] . '/template/footer.php';
 
-</html>
+?>

@@ -1,7 +1,5 @@
 <?php
 
-include_once '../model.php';
-
-$model = new Model();
+include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
 $delete = $model->delete($_GET);

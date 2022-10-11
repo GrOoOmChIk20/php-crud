@@ -1,9 +1,9 @@
 <?php
+session_start();
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/model.php';
 
 $model = new Model();
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -48,21 +48,27 @@ $model = new Model();
             <div class="col-md-12 mt-5">
 
                 <?php $insert = $model->insert();  ?>
-                <?php if (isset($model->errorField)) {  ?>
+
+                <?php if (isset($_SESSION['errorField'])) {  ?>
+
                     <div class="alert alert-danger" role="alert">
-                        <?php echo $model->errorField; ?>
+                        <?php echo $_SESSION['errorField']; ?>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                <?php } elseif (isset($model->succesField)) { ?>
+
+                <?php } elseif (isset($_SESSION['succesField'])) { ?>
+
                     <div class="alert alert-success" role="alert">
-                        <?php echo $model->succesField; ?>
+                        <?php echo $_SESSION['succesField']; ?>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                    
                 <?php } ?>
 
             </div>
         </div>
+
