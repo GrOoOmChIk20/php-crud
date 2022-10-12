@@ -1,13 +1,13 @@
 <?php
 
-$titlePage = 'Web-interface';
+$titlePage = 'Home';
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
 ?>
 
 <div class="row">
-    <div class="col-md-3 mx-auto">
+    <div class="col-md-4 mx-auto">
         <h4>Add user</h4>
         <form action="" method="post">
             <div class="form-group">
@@ -43,12 +43,12 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
                 </div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="User[insert]">Send</button>
+                <button type="submit" class="btn btn-primary" name="User[insert]">Add user</button>
             </div>
         </form>
     </div>
 
-    <div class="col-md-7 mx-auto">
+    <div class="col-md-8 mx-auto">
         <h4>Views users</h4>
         <table class="table table-hover table-dark">
             <thead>
@@ -79,15 +79,16 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
                             if ($field == 'id') {
 
                                 $idUser = $value;
-
                                 echo "<td>$numUser</td>";
+
                             } elseif ($field == 'birthday') {
 
                                 $value = date('d-m-Y', $value);
-
                                 echo "<td>$value</td>";
+
                             } else {
 
+                                $value = mb_strimwidth($value, 0, 15, '...');
                                 echo "<td>$value</td>";
                             }
                         }

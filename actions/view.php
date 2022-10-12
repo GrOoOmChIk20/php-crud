@@ -1,6 +1,6 @@
 <?php
 
-$titlePage = 'Web-interface: View user';
+$titlePage = 'View user';
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
@@ -11,6 +11,7 @@ $userData = $model->view($_GET);
 <div class="row justify-content-center">
 
     <div class="col-6 align-self-center">
+        
         <h1 class="text-center"><?= $titlePage ?></h1>
 
         <div class="form-group">

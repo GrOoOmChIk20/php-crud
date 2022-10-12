@@ -1,6 +1,6 @@
 <?php
 
-$titlePage = 'Web-interface: Edit user';
+$titlePage = 'Edit user';
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
@@ -11,7 +11,7 @@ $userData = $model->view($_GET);
 <div class="row justify-content-center">
 
     <div class="col-6 align-self-center">
-        <h1 class="text-center">Web-interface: Edit user</h1>
+        <h1 class="text-center"><?= $titlePage ?></h1>
         <?php $insert = $model->edit();  ?>
 
         <form action="" method="post">

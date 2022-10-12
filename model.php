@@ -2,24 +2,17 @@
 
 mysqli_report(MYSQLI_REPORT_STRICT);
 
-class Model {
-
-    private $host = "localhost";
-    private $userName = "root";
-    private $password = "";
-    private $dataBase = "sibers";
-
+class Model
+{
     private $connect;
 
     public $errorField;
     public $succesField;
 
-    public function __construct () 
+    public function __construct($db)
     {
         try {
-
-            $this->connect = new mysqli($this->host, $this->userName, $this->password, $this->dataBase);
-
+            $this->connect = new mysqli($db['host'], $db['userName'], $db['password'], $db['dataBase']);
         } catch (Exception $e) {
             echo 'Connection failed! ' . $e->getMessage();
         }
@@ -30,13 +23,10 @@ class Model {
         $userData = $_POST['User'];
 
         if (isset($userData['insert'])) {
-
             $formValidation = $this->validation($userData);
 
             switch ($formValidation['valid']) {
-
                 case true:
-
                     $userData = $formValidation['validFields'];
 
                     $userData['birthday'] = strtotime($userData['birthday']);
@@ -44,39 +34,32 @@ class Model {
                     $query = "INSERT INTO `users` (`login`, `password`, `name`, `surname`, `gender`, `birthday`) VALUES ('{$userData['login']}', '{$userData['pass']}', '{$userData['name']}', '{$userData['surname']}', '{$userData['gender']}', '{$userData['birthday']}')";
 
                     if ($sql = $this->connect->query($query)) {
-
-                        $_SESSION['succesField'] = "The entry successfully added";
+                        $_SESSION['succesField'] = 'User successfully added';
 
                         header("Location: " . $_SERVER["REQUEST_URI"]);
                         die;
-
                     } else {
-
-                        $_SESSION['errorField'] = "The entry has not been added, try again";
+                        $_SESSION['errorField'] = 'The entry has not been added, try again';
 
                         header("Location: " . $_SERVER["REQUEST_URI"]);
                         die;
-                        
                     }
 
                     break;
 
                 case false:
-
-                    $_SESSION['errorField'] = "Please fill in all the fields";
+                    $_SESSION['errorField'] = 'Please fill in all the fields';
 
                     header("Location: " . $_SERVER["REQUEST_URI"]);
                     die;
 
                     break;
-
             }
         }
     }
 
     public function edit()
     {
-
         $userData = $_POST['User'];
 
         if (isset($userData['edit'])) {
@@ -84,223 +67,194 @@ class Model {
             $formValidation = $this->validation($userData);
 
             switch ($formValidation['valid']) {
-
                 case true:
-
                     $userData = $formValidation['validFields'];
 
                     $idUser = $userData['id'];
-                   
+
                     $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
 
                     if (!empty($fetchUser)) {
-
                         $userData['birthday'] = strtotime($userData['birthday']);
 
                         $query = "UPDATE users SET `login` = '{$userData['login']}', `password` = '{$userData['pass']}', `name` = '{$userData['name']}', `surname` = '{$userData['surname']}', `gender` = '{$userData['gender']}', `birthday` = '{$userData['birthday']}'  WHERE id = $idUser";
 
                         if ($sql = $this->connect->query($query)) {
 
-                            $_SESSION['succesField'] = "The entry successfully added";
+                            $_SESSION['succesField'] = 'User successfully changed';
 
                             header("Location: " . $_SERVER["REQUEST_URI"]);
                             die;
-
                         } else {
 
-                            $_SESSION['errorField'] = "The entry has not been added, try again";
+                            $_SESSION['errorField'] = 'The entry has not been added, try again';
 
                             header("Location: " . $_SERVER["REQUEST_URI"]);
                             die;
-
                         }
-
                     } else {
 
-                        $_SESSION['errorField'] = "This user does not exist, please try again";
-
+                        $_SESSION['errorField'] = 'This user does not exist, please try again';
+                        
                         header("Location: " . $_SERVER["REQUEST_URI"]);
                         die;
-
                     }
 
                     break;
 
                 case false:
 
-                    $_SESSION['errorField'] = "Please fill in all the fields";
-
+                    $_SESSION['errorField'] = 'Please fill in all the fields';
                     header("Location: " . $_SERVER["REQUEST_URI"]);
                     die;
 
                     break;
             }
         }
-
     }
 
-    public function delete ($data)
+    public function delete($data)
     {
         $validData = $this->validation($data);
 
-        $idUser = $validData['validFields']['id'];
+        if ($validData['valid']) {
+        
+            $idUser = $validData['validFields']['id'];
 
-        switch (isset($idUser)) {
-           
-            case true:
+            switch (isset($idUser)) {
+                case true:
+                    $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
 
-                $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
+                    if (!empty($fetchUser)) {
+                        $query = "UPDATE users SET `is_deleted` = 1 WHERE id =  $idUser";
 
-                if (!empty($fetchUser)) {
+                        if ($sql = $this->connect->query($query)) {
+                            $_SESSION['succesField'] = 'The user has been successfully deleted';
 
-                    $query = "UPDATE users SET `is_deleted` = 1 WHERE id =  $idUser";
+                            header("Location: /");
+                            die;
+                        } else {
+                            $_SESSION['errorField'] = 'The user was not deleted, try again';
 
-                    if ($sql = $this->connect->query($query)) {
-
-                        $_SESSION['succesField'] = "The entry successfully added";
-
-                        header("Location: /");
-                        die;
-
+                            header("Location: /");
+                            die;
+                        }
                     } else {
-
-                        $_SESSION['errorField'] = "User not deleted, please try again";
+                        $_SESSION['errorField'] = 'This user does not exist, please try again';
 
                         header("Location: /");
                         die;
-
                     }
 
-                } else {
+                    break;
 
-                    $_SESSION['errorField'] = "This user does not exist, please try again";
+                case false:
+                    $_SESSION['errorField'] = 'User deletion failed, please try again';
 
                     header("Location: /");
                     die;
 
-                }
-
-                break;
-
-            case false:
-
-                $_SESSION['errorField'] = "User deletion failed, please try again";
-
-                header("Location: /");
-                die;
-
-                break;
+                    break;
+            }
         }
+
+        header("Location: /");
+        die;
 
     }
 
-    public function view ($data) 
+    public function view($data)
     {
         $validData = $this->validation($data);
 
-        $idUser = $validData['validFields']['id'];
+        if ($validData['valid']) {
 
-        switch (isset($idUser)) {
+            $idUser = $validData['validFields']['id'];
 
-            case true:
+            switch (isset($idUser)) {
+                case true:
+                    $fetchUser = $this->fetch('', ['id' => $idUser]);
 
-                $fetchUser = $this->fetch('', ['id' => $idUser]);
+                    if (!empty($fetchUser)) {
 
-                if (!empty($fetchUser)) {
+                        return $fetchUser[0];
+                        
+                    } else {
+                        $_SESSION['errorField'] = 'This user does not exist, please try again';
 
-                    return $fetchUser[0];
+                        header("Location: /");
+                        die;
+                    }
 
-                } else {
+                    break;
 
-                    $_SESSION['errorField'] = "This user does not exist, please try again";
+                case false:
+                    $_SESSION['errorField'] = 'This user does not exist, please try again';
 
-                    //TODO: redirect to index
+                    header("Location: /");
+                    die;
 
-                }
-
-                break;
-
-            case false:
-
-                $_SESSION['errorField'] = "This user does not exist, please try again";
-
-                //TODO: redirect to index
-
-                break;
+                    break;
+            }
         }
+
+        header("Location: /");
+        die;
 
     }
 
-    public function fetch ($fields, $whereFields = null)
+    public function fetch($fields, $whereFields = null)
     {
         $data = [];
         $queryRows = null;
 
         if (is_array($fields)) {
-
             for ($i = 0; $i < count($fields); $i++) {
-
-                if ($i+1 == count($fields)) {
-
+                if ($i + 1 == count($fields)) {
                     $queryRows .= ' ' . $fields[$i];
                     break;
-
                 }
 
                 $queryRows .= ' ' . $fields[$i] . ',';
-
             }
-
         } else {
-            
             $queryRows = '*';
         }
 
         $query = "SELECT $queryRows FROM users";
 
         if (!is_null($whereFields)) {
-
-            $query .= ' WHERE (';
+            $query .= ' WHERE ';
 
             foreach ($whereFields as $field => $value) {
-
-                $query .= " $field = $value";
+                $query .= " $field LIKE '$value'";
 
                 end($whereFields);
-                
+
                 if ($field !== key($whereFields)) {
                     $query .= ' AND';
                 }
-
             }
 
-            $query .= ' AND is_deleted = 0)';
-
+            $query .= ' AND is_deleted = 0';
         } else {
-            $query .= " WHERE is_deleted = 0";
+            $query .= " WHERE is_deleted LIKE '0'";
         }
-            
-       
 
         if ($sql = $this->connect->query($query)) {
-
             if (mysqli_num_rows($sql) == 0) {
-
                 return $data;
             }
 
             while ($row = mysqli_fetch_assoc($sql)) {
-
                 $data[] = $row;
-
-          }  
-
+            }
         }
 
-       return $data;
+        return $data;
     }
 
-    public function validation ($data)
+    public function validation($data)
     {
         $formValid = [];
         $formValid['valid'] = true;
@@ -308,15 +262,11 @@ class Model {
         $formValid['notValidFields'] = [];
 
         foreach ($data as $key => $value) {
-
             if ($key == 'submit' || $key == 'insert' || $key == 'edit') continue;
 
             if (isset($value) && (!empty($value) || $value === '0')) {
-
-                 if ($key === 'id') {
-
-                    $value = (int) $value;
-                    
+                if ($key === 'id') {
+                    $value = (int)$value;
                 }
 
                 $dataValid = trim($value);
@@ -324,22 +274,16 @@ class Model {
                 $dataValid = htmlspecialchars($value);
 
                 if ($key == 'birthday') {
-
                     if (!is_numeric(strtotime($value))) {
-
                         $formValid['valid'] = false;
                         $formValid['notValidFields'][] = $key;
 
                         continue;
-
                     }
-
                 }
 
                 $formValid['validFields'][$key] = $dataValid;
-
             } else {
-
                 $formValid['valid'] = false;
                 $formValid['notValidFields'][] = $key;
             }

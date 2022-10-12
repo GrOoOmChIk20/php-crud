@@ -1,9 +1,22 @@
 <?php
+$configApp = include_once $_SERVER['DOCUMENT_ROOT'] . '/app/config.php';
+
 session_start();
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/model.php';
 
-$model = new Model();
+$model = new Model($configApp['components']);
+
+if (isset($_SESSION['UserData'])) {
+
+    $userDataAuth = $_SESSION['UserData'];
+
+} elseif ($configApp['path_parts']['filename'] != 'login') {
+
+    header("Location: ../login.php");
+    die;
+
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -16,7 +29,7 @@ $model = new Model();
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title><?= $titlePage ?></title>
+    <title><?= $configApp['name'] . ': ' . $titlePage ?></title>
 </head>
 
 <body>
@@ -33,15 +46,23 @@ $model = new Model();
                         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                     </li> -->
                 </ul>
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Ilya Romanenko
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <a href="" class="dropdown-item" type="button">Edit profile</a>
-                        <a href="" class="dropdown-item" type="button">Log out</a>
+
+                <?php
+
+                if (isset($userDataAuth)) { ?>
+
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <?=  $userDataAuth['name'] . ' ' . $userDataAuth['surname'] ?>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <?= "<a href='../actions/edit.php?id={$userDataAuth['id']}' class='dropdown-item'>Edit profile</a>"; ?>
+                            <?= "<a href='../actions/logout.php?id={$userDataAuth['id']}' class='dropdown-item'>Log out</a>"; ?>
+                        </div>
                     </div>
-                </div>
+
+                <?php }  ?>
+
             </div>
         </nav>
         <div class="row">
@@ -66,9 +87,8 @@ $model = new Model();
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    
+
                 <?php } ?>
 
             </div>
         </div>
-
