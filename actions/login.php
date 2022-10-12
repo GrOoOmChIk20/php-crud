@@ -2,47 +2,74 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
-$formData = $model->validation($_POST['User']);
+class User extends Model
+{
 
-if ($formData['valid']) {
+    public function login($userData)
+    {
 
-    $validData = $formData['validFields'];
+        $formData = $this->validation($userData);
 
-    if (isset($validData['login']) && isset($validData['pass'])){
+        if ($formData['valid']) {
 
-        $userData = $model->fetch(['*'], ['login' => $validData['login'], 'password' => $validData['pass']]);
+            $validData = $formData['validFields'];
 
-        if (!empty($userData)) {
+            if (isset($validData['login']) && isset($validData['pass'])) {
 
-            $_SESSION['UserData'] = $userData[0];
+                $fetchUser = $this->fetch(['*'], ['login' => $validData['login']]);
 
-            $_SESSION['succesField'] = 'Hi '. $_SESSION['UserData']['name'] . ' ' . $_SESSION['UserData']['surname'];
+                if (!empty($fetchUser)) {
 
-            header("Location: /");
-            die;
+                    $userData = $fetchUser[0];
 
+                    if (password_verify($validData['pass'], $userData['password'])) {
+
+                        $_SESSION['UserData'] = $userData;
+
+                        $_SESSION['succesField'] = 'Hi ' . $_SESSION['UserData']['name'] . ' ' . $_SESSION['UserData']['surname'];
+
+                        header("Location: /");
+                        die;
+
+                    } else {
+
+                        $_SESSION['errorField'] = 'Invalid username or password';
+
+                        header("Location: /login.php");
+                        die;
+
+                    }
+
+                } else {
+
+                    $_SESSION['errorField'] = 'Invalid username or password';
+
+                    header("Location: /login.php");
+                    die;
+
+                }
+            } else {
+
+                $_SESSION['errorField'] = 'Please fill in all the fields';
+
+                header("Location: /login.php");
+                die;
+
+            }
         } else {
-            $_SESSION['errorField'] = 'Invalid username or password';
+
+            $_SESSION['errorField'] = 'Please fill in all the fields';
 
             header("Location: /login.php");
             die;
+
         }
-       
-    } else {
-        $_SESSION['errorField'] = 'Please fill in all the fields';
-
-        header("Location: /login.php");
-        die;
     }
-
-} else {
-
-    $_SESSION['errorField'] = 'Please fill in all the fields';
-
-    header("Location: /login.php");
-    die;
 
 }
 
+$user = new User($configApp['components']);
+
+$user->login($_POST['User']);
 
 ?>

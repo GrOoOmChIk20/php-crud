@@ -30,6 +30,7 @@ class Model
                     $userData = $formValidation['validFields'];
 
                     $userData['birthday'] = strtotime($userData['birthday']);
+                    $userData['pass'] = password_hash($userData['pass'], PASSWORD_DEFAULT);
 
                     $query = "INSERT INTO `users` (`login`, `password`, `name`, `surname`, `gender`, `birthday`) VALUES ('{$userData['login']}', '{$userData['pass']}', '{$userData['name']}', '{$userData['surname']}', '{$userData['gender']}', '{$userData['birthday']}')";
 
@@ -75,7 +76,9 @@ class Model
                     $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
 
                     if (!empty($fetchUser)) {
+
                         $userData['birthday'] = strtotime($userData['birthday']);
+                        $userData['pass'] = password_hash($userData['pass'], PASSWORD_DEFAULT);
 
                         $query = "UPDATE users SET `login` = '{$userData['login']}', `password` = '{$userData['pass']}', `name` = '{$userData['name']}', `surname` = '{$userData['surname']}', `gender` = '{$userData['gender']}', `birthday` = '{$userData['birthday']}'  WHERE id = $idUser";
 
@@ -149,6 +152,7 @@ class Model
                     break;
 
                 case false:
+
                     $_SESSION['errorField'] = 'User deletion failed, please try again';
 
                     header("Location: /");
@@ -167,28 +171,37 @@ class Model
     {
         $validData = $this->validation($data);
 
+       
         if ($validData['valid']) {
 
             $idUser = $validData['validFields']['id'];
 
             switch (isset($idUser)) {
+
                 case true:
+
                     $fetchUser = $this->fetch('', ['id' => $idUser]);
 
                     if (!empty($fetchUser)) {
 
-                        return $fetchUser[0];
-                        
+                        $user = $fetchUser[0];
+                        $user['password'] = '';
+
+                        return $user;
+
                     } else {
+
                         $_SESSION['errorField'] = 'This user does not exist, please try again';
 
                         header("Location: /");
                         die;
+
                     }
 
                     break;
 
                 case false:
+
                     $_SESSION['errorField'] = 'This user does not exist, please try again';
 
                     header("Location: /");
@@ -209,25 +222,33 @@ class Model
         $queryRows = null;
 
         if (is_array($fields)) {
+
             for ($i = 0; $i < count($fields); $i++) {
+
                 if ($i + 1 == count($fields)) {
+
                     $queryRows .= ' ' . $fields[$i];
                     break;
+
                 }
 
                 $queryRows .= ' ' . $fields[$i] . ',';
             }
+            
         } else {
+
             $queryRows = '*';
+
         }
 
         $query = "SELECT $queryRows FROM users";
 
         if (!is_null($whereFields)) {
+            
             $query .= ' WHERE ';
 
             foreach ($whereFields as $field => $value) {
-                $query .= " $field LIKE '$value'";
+                $query .= " $field = '$value'";
 
                 end($whereFields);
 
@@ -238,16 +259,21 @@ class Model
 
             $query .= ' AND is_deleted = 0';
         } else {
-            $query .= " WHERE is_deleted LIKE '0'";
+            $query .= " WHERE is_deleted = '0'";
         }
 
         if ($sql = $this->connect->query($query)) {
+
             if (mysqli_num_rows($sql) == 0) {
+
                 return $data;
+
             }
 
             while ($row = mysqli_fetch_assoc($sql)) {
+
                 $data[] = $row;
+ 
             }
         }
 
@@ -262,27 +288,33 @@ class Model
         $formValid['notValidFields'] = [];
 
         foreach ($data as $key => $value) {
+
             if ($key == 'submit' || $key == 'insert' || $key == 'edit') continue;
 
             if (isset($value) && (!empty($value) || $value === '0')) {
-                if ($key === 'id') {
-                    $value = (int)$value;
-                }
 
+               
                 $dataValid = trim($value);
                 $dataValid = stripslashes($value);
                 $dataValid = htmlspecialchars($value);
 
-                if ($key == 'birthday') {
-                    if (!is_numeric(strtotime($value))) {
-                        $formValid['valid'] = false;
-                        $formValid['notValidFields'][] = $key;
+                if ($key == 'id') {
 
-                        continue;
-                    }
+                    $dataValid = (int)$dataValid;
+
+                }
+
+                if ($key == 'birthday' && !is_numeric(strtotime($value))) {
+    
+                    $formValid['valid'] = false;
+                    $formValid['notValidFields'][] = $key;
+
+                    continue;
+
                 }
 
                 $formValid['validFields'][$key] = $dataValid;
+
             } else {
                 $formValid['valid'] = false;
                 $formValid['notValidFields'][] = $key;
@@ -291,4 +323,5 @@ class Model
 
         return $formValid;
     }
+
 }

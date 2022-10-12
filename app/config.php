@@ -13,6 +13,8 @@ return[
 
     ],
 
+    'salt' => '429fgk4gShh69vcmSJKe',
+    
     'path_parts' => pathinfo($_SERVER['SCRIPT_NAME']),
 ];
 
