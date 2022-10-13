@@ -1,4 +1,5 @@
 <?php
+
 $configApp = include_once $_SERVER['DOCUMENT_ROOT'] . '/app/config.php';
 
 session_start();
@@ -9,6 +10,12 @@ $model = new Model($configApp['components']);
 
 if (isset($_SESSION['UserData'])) {
 
+    if ($configApp['path_parts']['filename'] == 'login') {
+
+        header("Location: /");
+        die;
+    }
+
     $userDataAuth = $_SESSION['UserData'];
 
 } elseif ($configApp['path_parts']['filename'] != 'login') {
@@ -17,6 +24,7 @@ if (isset($_SESSION['UserData'])) {
     die;
 
 }
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -57,7 +65,7 @@ if (isset($_SESSION['UserData'])) {
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                             <?= "<a href='../actions/edit.php?id={$userDataAuth['id']}' class='dropdown-item'>Edit profile</a>"; ?>
-                            <?= "<a href='../actions/logout.php?id={$userDataAuth['id']}' class='dropdown-item'>Log out</a>"; ?>
+                            <?= "<a href='../actions/logout.php' class='dropdown-item'>Log out</a>"; ?>
                         </div>
                     </div>
 

@@ -4,7 +4,7 @@ return[
     'name' => 'Web-interface', // Name application
     'copyright' => 'Copyright © '. date('Y') . '. Ilya Romanenko.',
 
-    'components' => [
+    'components' => [ // Include data base
 
         'host' => 'localhost',  
         'userName' => 'root',
@@ -13,7 +13,7 @@ return[
 
     ],
 
-    'count_list' => 3,
+    'count_list' => 10, // How many entries to output per page
     
     'path_parts' => pathinfo($_SERVER['SCRIPT_NAME']),
 ];

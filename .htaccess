@@ -1,0 +1,3 @@
+<Files ~ "^model.php">
+  Deny from all
+</Files>

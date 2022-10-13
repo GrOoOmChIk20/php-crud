@@ -19,10 +19,6 @@ $userData = $model->view($_GET);
                 <input type="hidden" name="User[id]" value="<?= $userData['id']; ?>"></p>
             </div>
             <div class="form-group">
-                <label>Login</label>
-                <input type="text" class="form-control" name="User[login]" placeholder="Login" value="<?= $userData['login']; ?>">
-            </div>
-            <div class="form-group">
                 <label>Password</label>
                 <input type="password" class="form-control" name="User[pass]" placeholder="Password" value="<?= $userData['password']; ?>">
             </div>

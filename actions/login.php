@@ -16,7 +16,7 @@ class User extends Model
 
             if (isset($validData['login']) && isset($validData['pass'])) {
 
-                $fetchUser = $this->fetch(['*'], ['login' => $validData['login']]);
+                $fetchUser = $this->fetch(['*'], ['login' => $validData['login'], ['is_admin' => 1]]);
 
                 if (!empty($fetchUser)) {
 
@@ -33,7 +33,7 @@ class User extends Model
 
                     } else {
 
-                        $_SESSION['errorField'] = 'Invalid username or password';
+                        $_SESSION['errorField'] = 'Wrong username or password or you are not an administrator';
 
                         header("Location: /login.php");
                         die;
@@ -42,7 +42,7 @@ class User extends Model
 
                 } else {
 
-                    $_SESSION['errorField'] = 'Invalid username or password';
+                    $_SESSION['errorField'] = 'Wrong username or password or you are not an administrator';
 
                     header("Location: /login.php");
                     die;

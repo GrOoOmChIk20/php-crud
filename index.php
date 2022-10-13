@@ -4,6 +4,7 @@ $titlePage = 'Home';
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
+// var_dump($_SESSION);die;
 ?>
 
 <div class="row">
@@ -59,11 +60,17 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
                     {
 
                         if ($getSort == $sort_asc) {
+
                             return '<a class="active" href="?p=' . $page . '&sort=' . $sort_desc . '">' . $title . ' <i>▲</i></a>';
+
                         } elseif ($getSort == $sort_desc) {
+
                             return '<a class="active" href="?p=' . $page . '&sort=' . $sort_asc . '">' . $title . ' <i>▼</i></a>';
+
                         } else {
+
                             return '<a href="?p=' . $page . '&sort=' . $sort_asc . '">' . $title . '</a>';
+
                         }
                     }
 
@@ -78,16 +85,27 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
                             if (isset($validFields['sort']) && !empty($validFields['sort'])) {
 
                                 $sort = $validFields['sort'];
+
+                            } else {
+
+                                $sort = 'id_asc';
+
                             }
                             if (isset($validFields['p']) && !empty($validFields['p'])) {
 
                                 $page = (int)$validFields['p'];
+
                             } else {
+
                                 $page = 1;
+
                             }
                         }
                     } else {
+
                         $page = 1;
+                        $sort = 'id_asc';
+
                     }
 
                     ?>
@@ -97,6 +115,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
                     <th scope="col"><?= sort_link('Gender', 'gender_asc', 'gender_desc', $page, $sort); ?></th>
                     <th scope="col"><?= sort_link('Birthday', 'birthday_asc', 'birthday_desc',$page, $sort); ?></th>
                     <th scope="col">Action</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -113,8 +132,6 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
                 $usersRowsLimit = $model->fetch(['id', 'name', 'surname', 'gender', 'birthday'], null, $sort, $limit);
 
-               
-
                 if (!empty($usersRowsLimit)) {
 
                     foreach ($usersRowsLimit as $userRow) {
@@ -129,14 +146,17 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
                                 $idUser = $value;
                                 echo "<td>$numUser</td>";
+
                             } elseif ($field == 'birthday') {
 
                                 $value = date('d-m-Y', $value);
                                 echo "<td>$value</td>";
+
                             } else {
 
                                 $value = mb_strimwidth($value, 0, 15, '...');
                                 echo "<td>$value</td>";
+
                             }
                         }
 
@@ -151,7 +171,6 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
             </tbody>
         </table>
-
 
         <nav aria-label="...">
             <ul class="pagination">

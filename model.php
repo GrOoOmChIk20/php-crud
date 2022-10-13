@@ -23,32 +23,48 @@ class Model
         $userData = $_POST['User'];
 
         if (isset($userData['insert'])) {
+
             $formValidation = $this->validation($userData);
 
             switch ($formValidation['valid']) {
+
                 case true:
+
                     $userData = $formValidation['validFields'];
 
-                    $userData['birthday'] = strtotime($userData['birthday']);
-                    $userData['pass'] = password_hash($userData['pass'], PASSWORD_DEFAULT);
+                    $fetchUser = $this->fetch(['id'], ['login' => $userData['login']]);
 
-                    $query = "INSERT INTO `users` (`login`, `password`, `name`, `surname`, `gender`, `birthday`) VALUES ('{$userData['login']}', '{$userData['pass']}', '{$userData['name']}', '{$userData['surname']}', '{$userData['gender']}', '{$userData['birthday']}')";
+                    if (empty($fetchUser)) {
 
-                    if ($sql = $this->connect->query($query)) {
-                        $_SESSION['succesField'] = 'User successfully added';
+                        $userData['birthday'] = strtotime($userData['birthday']);
+                        $userData['pass'] = password_hash($userData['pass'], PASSWORD_DEFAULT);
 
-                        header("Location: " . $_SERVER["REQUEST_URI"]);
-                        die;
+                        $query = "INSERT INTO `users` (`login`, `password`, `name`, `surname`, `gender`, `birthday`) VALUES ('{$userData['login']}', '{$userData['pass']}', '{$userData['name']}', '{$userData['surname']}', '{$userData['gender']}', '{$userData['birthday']}')";
+
+                        if ($sql = $this->connect->query($query)) {
+                            $_SESSION['succesField'] = 'User successfully added';
+
+                            header("Location: " . $_SERVER["REQUEST_URI"]);
+                            die;
+                        } else {
+                            $_SESSION['errorField'] = 'The entry has not been added, try again';
+
+                            header("Location: " . $_SERVER["REQUEST_URI"]);
+                            die;
+                        }
                     } else {
-                        $_SESSION['errorField'] = 'The entry has not been added, try again';
+
+                        $_SESSION['errorField'] = 'A user with this login exists';
 
                         header("Location: " . $_SERVER["REQUEST_URI"]);
                         die;
+
                     }
 
                     break;
 
                 case false:
+
                     $_SESSION['errorField'] = 'Please fill in all the fields';
 
                     header("Location: " . $_SERVER["REQUEST_URI"]);
@@ -68,7 +84,9 @@ class Model
             $formValidation = $this->validation($userData);
 
             switch ($formValidation['valid']) {
+                
                 case true:
+
                     $userData = $formValidation['validFields'];
 
                     $idUser = $userData['id'];
@@ -77,24 +95,34 @@ class Model
 
                     if (!empty($fetchUser)) {
 
-                        $userData['birthday'] = strtotime($userData['birthday']);
-                        $userData['pass'] = password_hash($userData['pass'], PASSWORD_DEFAULT);
+                            $idUser = $fetchUser[0]['id'];
 
-                        $query = "UPDATE users SET `login` = '{$userData['login']}', `password` = '{$userData['pass']}', `name` = '{$userData['name']}', `surname` = '{$userData['surname']}', `gender` = '{$userData['gender']}', `birthday` = '{$userData['birthday']}'  WHERE id = $idUser";
+                            $userData['birthday'] = strtotime($userData['birthday']);
+                            $userData['pass'] = password_hash($userData['pass'], PASSWORD_DEFAULT);
 
-                        if ($sql = $this->connect->query($query)) {
+                            $query = "UPDATE users SET `password` = '{$userData['pass']}', `name` = '{$userData['name']}', `surname` = '{$userData['surname']}', `gender` = '{$userData['gender']}', `birthday` = '{$userData['birthday']}'  WHERE id = $idUser";
 
-                            $_SESSION['succesField'] = 'User successfully changed';
+                            if ($sql = $this->connect->query($query)) {
 
-                            header("Location: " . $_SERVER["REQUEST_URI"]);
-                            die;
-                        } else {
+                                if ($_SESSION['UserData']['id'] == $idUser) {
 
-                            $_SESSION['errorField'] = 'The entry has not been added, try again';
+                                    header("Location: ../actions/logout.php" . $_SERVER["REQUEST_URI"]);
+                                    die;
 
-                            header("Location: " . $_SERVER["REQUEST_URI"]);
-                            die;
-                        }
+                                }
+                                
+                                $_SESSION['succesField'] = 'User successfully changed';
+
+                                header("Location: " . $_SERVER["REQUEST_URI"]);
+                                die;
+                            } else {
+
+                                $_SESSION['errorField'] = 'The entry has not been added, try again';
+
+                                header("Location: " . $_SERVER["REQUEST_URI"]);
+                                die;
+                            }
+
                     } else {
 
                         $_SESSION['errorField'] = 'This user does not exist, please try again';
@@ -126,12 +154,21 @@ class Model
 
             switch (isset($idUser)) {
                 case true:
-                    $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
 
+                    $fetchUser = $this->fetch(['id'], ['id' => $idUser]);
+                    $idUser = $fetchUser[0]['id'];
+                    
                     if (!empty($fetchUser)) {
                         $query = "UPDATE users SET `is_deleted` = 1 WHERE id =  $idUser";
 
                         if ($sql = $this->connect->query($query)) {
+
+                            if ($_SESSION['UserData']['id'] == $idUser) {
+
+                                header("Location: ../actions/logout.php" . $_SERVER["REQUEST_URI"]);
+                                die;
+                            }
+
                             $_SESSION['succesField'] = 'The user has been successfully deleted';
 
                             header("Location: /");
@@ -170,7 +207,6 @@ class Model
     public function view($data)
     {
         $validData = $this->validation($data);
-
        
         if ($validData['valid']) {
 
@@ -249,6 +285,7 @@ class Model
             $query .= ' WHERE ';
 
             foreach ($whereFields as $field => $value) {
+
                 $query .= " $field = '$value'";
 
                 end($whereFields);
@@ -256,16 +293,21 @@ class Model
                 if ($field !== key($whereFields)) {
                     $query .= ' AND';
                 }
+
             }
 
             $query .= ' AND is_deleted = 0';
+
         } else {
+
             $query .= " WHERE is_deleted = '0'";
+
         }
 
         if (!is_null($sort)) {
 
             $sort_list = array(
+                'id_asc'   => '`id`',
                 'name_asc'   => '`name`',
                 'name_desc'  => '`name` DESC',
                 'surname_asc'  => '`surname`',
@@ -280,6 +322,7 @@ class Model
 
                 $sort_sql = $sort_list[$sort];
                 $query .= " ORDER BY $sort_sql";
+
             }
         }
 
@@ -321,6 +364,7 @@ class Model
 
     public function validation($data)
     {
+
         $formValid = [];
         $formValid['valid'] = true;
         $formValid['validFields'] = [];
