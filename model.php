@@ -216,7 +216,7 @@ class Model
 
     }
 
-    public function fetch($fields, $whereFields = null)
+    public function fetch($fields, $whereFields = null, $sort = null, $limit = null)
     {
         $data = [];
         $queryRows = null;
@@ -243,6 +243,7 @@ class Model
 
         $query = "SELECT $queryRows FROM users";
 
+
         if (!is_null($whereFields)) {
             
             $query .= ' WHERE ';
@@ -260,6 +261,44 @@ class Model
             $query .= ' AND is_deleted = 0';
         } else {
             $query .= " WHERE is_deleted = '0'";
+        }
+
+        if (!is_null($sort)) {
+
+            $sort_list = array(
+                'name_asc'   => '`name`',
+                'name_desc'  => '`name` DESC',
+                'surname_asc'  => '`surname`',
+                'surname_desc' => '`surname` DESC',
+                'gender_asc'   => '`gender`',
+                'gender_desc'  => '`gender` DESC',
+                'birthday_asc'   => '`birthday`',
+                'birthday_desc'  => '`birthday` DESC',
+            );
+
+            if (array_key_exists($sort, $sort_list)) {
+
+                $sort_sql = $sort_list[$sort];
+                $query .= " ORDER BY $sort_sql";
+            }
+        }
+
+        if (!is_null($limit)) {
+
+            switch(count($limit)) {
+
+                case '1':
+
+                    $query .= " LIMIT $limit[0]";
+                    break;
+
+                case '2':
+
+                    $query .= " LIMIT $limit[0], $limit[1]";
+                    break;
+
+            }
+
         }
 
         if ($sql = $this->connect->query($query)) {

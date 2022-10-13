@@ -13,7 +13,7 @@ return[
 
     ],
 
-    'salt' => '429fgk4gShh69vcmSJKe',
+    'count_list' => 3,
     
     'path_parts' => pathinfo($_SERVER['SCRIPT_NAME']),
 ];

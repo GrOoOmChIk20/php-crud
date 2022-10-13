@@ -9,5 +9,3 @@ if ($configApp['path_parts']['filename'] == 'logout') {
     header("Location: ../login.php");
     die;
 }
-
-// var_dump($configApp['path_parts']);

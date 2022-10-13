@@ -53,22 +53,71 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
         <table class="table table-hover table-dark">
             <thead>
                 <tr>
+                    <?php
+
+                    function sort_link($title, $sort_asc, $sort_desc, $page, $getSort)
+                    {
+
+                        if ($getSort == $sort_asc) {
+                            return '<a class="active" href="?p=' . $page . '&sort=' . $sort_desc . '">' . $title . ' <i>▲</i></a>';
+                        } elseif ($getSort == $sort_desc) {
+                            return '<a class="active" href="?p=' . $page . '&sort=' . $sort_asc . '">' . $title . ' <i>▼</i></a>';
+                        } else {
+                            return '<a href="?p=' . $page . '&sort=' . $sort_asc . '">' . $title . '</a>';
+                        }
+                    }
+
+                    if (isset($_GET) && !empty($_GET)) {
+
+                        $validGet = $model->validation($_GET);
+
+                        if ($validGet['valid']) {
+
+                            $validFields = $validGet['validFields'];
+
+                            if (isset($validFields['sort']) && !empty($validFields['sort'])) {
+
+                                $sort = $validFields['sort'];
+                            }
+                            if (isset($validFields['p']) && !empty($validFields['p'])) {
+
+                                $page = (int)$validFields['p'];
+                            } else {
+                                $page = 1;
+                            }
+                        }
+                    } else {
+                        $page = 1;
+                    }
+
+                    ?>
                     <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Surname</th>
-                    <th scope="col">Gender</th>
-                    <th scope="col">Birthday</th>
+                    <th scope="col"><?= sort_link('Name', 'name_asc', 'name_desc', $page, $sort); ?></th>
+                    <th scope="col"><?= sort_link('Surname', 'surname_asc', 'surname_desc', $page, $sort); ?></th>
+                    <th scope="col"><?= sort_link('Gender', 'gender_asc', 'gender_desc', $page, $sort); ?></th>
+                    <th scope="col"><?= sort_link('Birthday', 'birthday_asc', 'birthday_desc',$page, $sort); ?></th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
 
                 <?php
-                $usersRows = $model->fetch(['id', 'name', 'surname', 'gender', 'birthday']);
 
-                if (!empty($usersRows)) {
+                $userRowsCount = count($model->fetch(['id']));
 
-                    foreach ($usersRows as $userRow) {
+                $countRow = $configApp['count_list'];
+                $pageCount = ceil($userRowsCount / $countRow);
+                $startRow = ($page * $configApp['count_list']) - $countRow;
+                
+                $limit = array($startRow,$countRow);
+
+                $usersRowsLimit = $model->fetch(['id', 'name', 'surname', 'gender', 'birthday'], null, $sort, $limit);
+
+               
+
+                if (!empty($usersRowsLimit)) {
+
+                    foreach ($usersRowsLimit as $userRow) {
 
                         echo '<tr>';
 
@@ -80,12 +129,10 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
                                 $idUser = $value;
                                 echo "<td>$numUser</td>";
-
                             } elseif ($field == 'birthday') {
 
                                 $value = date('d-m-Y', $value);
                                 echo "<td>$value</td>";
-
                             } else {
 
                                 $value = mb_strimwidth($value, 0, 15, '...');
@@ -104,6 +151,28 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 
             </tbody>
         </table>
+
+
+        <nav aria-label="...">
+            <ul class="pagination">
+
+                <?php
+
+                for ($i = 1; $i <= $pageCount; $i++) {
+
+                    $classLi = 'page-item';
+
+                    if ($i == $page) {
+                        $classLi .= ' active';
+                    }
+
+                    echo "<li class='$classLi'><a class='page-link' href='?p=$i&sort=$sort'>$i</a></li>";
+                }
+
+                ?>
+
+            </ul>
+        </nav>
     </div>
 </div>
 
@@ -112,4 +181,3 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/template/head.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/template/footer.php';
 
 ?>
-
